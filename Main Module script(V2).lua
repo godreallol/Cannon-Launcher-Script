@@ -25,6 +25,11 @@ local ProjectileLife = 5  -- time in seconds before a projectile is removed from
 local TrailSize = Vector3.new(0.2, 0.2, 0.2)  -- size of each tiny trail segment spawned behind the projectile
 local TrailLife = 0.2  -- duration each trail segment exists before being removed
 
+-- Debris settings for impact cubes
+local ImpactCubeCount = 6  -- how many cubes fly out when projectile collides
+local ImpactCubeSize = Vector3.new(1,1,1)  -- size of each cube debris
+local ImpactCubeLife = 1.5  -- how long cubes remain before being removed
+
 -- Define a “class-like” table to handle projectiles
 local Projectile = {}
 Projectile.__index = Projectile  -- ensures that methods work correctly when called using the colon (:) syntax
@@ -140,32 +145,33 @@ function Projectile:HandleCollision(hitThing)
 	explosionEffect.Parent = self.Part
 	Debris:AddItem(explosionEffect, 1)  -- remove particles after 1 second
 
-	-- spawn debris cube parts at the impact location
-	for i = 1, 8 do
-		local debrisPart = Instance.new("Part")
-		debrisPart.Size = Vector3.new(1,1,1)  -- small cube
-		debrisPart.Position = self.Part.Position
-		debrisPart.Anchored = false
-		debrisPart.CanCollide = false  -- no physical blocking
-		debrisPart.Material = Enum.Material.Concrete
-		debrisPart.Color = Color3.fromRGB(100,100,100)
-		debrisPart.Parent = Workspace
+	-- spawn impact cubes at the point of impact
+	for i = 1, ImpactCubeCount do
+		local cube = Instance.new("Part")  -- create a new cube
+		cube.Size = ImpactCubeSize  -- assign size
+		cube.CFrame = self.Part.CFrame * CFrame.new(math.random(-2,2), 0, math.random(-2,2))  -- slight horizontal offset
+		cube.Anchored = false  -- let physics affect cubes
+		cube.CanCollide = false  -- prevent physical obstruction
+		cube.Material = Enum.Material.Concrete  -- make cubes look solid
+		cube.BrickColor = BrickColor.new("Dark stone grey")  -- standard debris color
+		cube.Parent = Workspace  -- add cube to world
 
-		-- give it random impulse so it "flies out"
-		local VectorF = Instance.new("VectorForce")
+		-- attach VectorForce to launch cube upwards
 		local attach = Instance.new("Attachment")
-		attach.Parent = debrisPart
-		VectorF.Attachment0 = attach
-		VectorF.Force = Vector3.new(
-			math.random(-50,50),
-			math.random(20,80),
-			math.random(-50,50)
-		) * debrisPart:GetMass()
-		VectorF.RelativeTo = Enum.ActuatorRelativeTo.World
-		VectorF.Parent = debrisPart
+		attach.Parent = cube
 
-		-- cleanup debris after 1 second
-		Debris:AddItem(debrisPart, 1)
+		local vectorForce = Instance.new("VectorForce")
+		vectorForce.Attachment0 = attach
+		vectorForce.Force = Vector3.new(
+			math.random(-150,150),  -- horizontal spread
+			math.random(150,250),   -- upward thrust
+			math.random(-150,150)   -- horizontal spread
+		) * cube:GetMass()
+		vectorForce.RelativeTo = Enum.ActuatorRelativeTo.World
+		vectorForce.Parent = cube
+
+		-- schedule cube cleanup after ImpactCubeLife
+		Debris:AddItem(cube, ImpactCubeLife)
 	end
 
 	-- update stats if owner exists in tracking
