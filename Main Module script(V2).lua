@@ -1,4 +1,5 @@
 -- [This Script is updated for Re-Verification]
+-- [This Script is updated for Re-Verification]
 -- This game is about Launching Cannonballs Basically with Tons of effects
 --This is a Module script
 
@@ -143,13 +144,13 @@ function Projectile:HandleCollision(hitThing)
 	explosionEffect.Rate = 100
 	explosionEffect.Speed = NumberRange.new(10)
 	explosionEffect.Parent = self.Part
-	Debris:AddItem(explosionEffect, 1)  -- remove particles after 1 second
+	Debris:AddItem(explosionEffect, 2)  -- remove particles after 2 seconds
 
 	-- spawn impact cubes at the point of impact
 	for i = 1, ImpactCubeCount do
 		local cube = Instance.new("Part")  -- create a new cube
 		cube.Size = ImpactCubeSize  -- assign size
-		cube.CFrame = self.Part.CFrame * CFrame.new(math.random(-2,2), 0, math.random(-2,2))  -- slight horizontal offset
+		cube.CFrame = self.Part.CFrame * CFrame.new(math.random(-2,2), 2, math.random(-2,2))  -- slight horizontal offset
 		cube.Anchored = false  -- let physics affect cubes
 		cube.CanCollide = false  -- prevent physical obstruction
 		cube.Material = Enum.Material.Concrete  -- make cubes look solid
