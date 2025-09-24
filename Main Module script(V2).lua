@@ -1,4 +1,5 @@
--- This game is about Launching Cannonballs Basically with Tons of effects
+-- [THIS SCRIPT IS UPDATED FOR RE-VERIFICATION]
+-- This game is about Launching Cannonballs with Tons of effects
 --This is a Module script
 
 -- Load up Roblox services we’ll be using throughout this script
