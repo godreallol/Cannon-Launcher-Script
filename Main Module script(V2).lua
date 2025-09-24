@@ -152,17 +152,17 @@ function Projectile:HandleCollision(hitThing)
 		debrisPart.Parent = Workspace
 
 		-- give it random impulse so it "flies out"
-		local bodyVel = Instance.new("VectorForce")
+		local VectorF = Instance.new("VectorForce")
 		local attach = Instance.new("Attachment")
 		attach.Parent = debrisPart
-		bodyVel.Attachment0 = attach
-		bodyVel.Force = Vector3.new(
+		VectorF.Attachment0 = attach
+		VectorF.Force = Vector3.new(
 			math.random(-50,50),
 			math.random(20,80),
 			math.random(-50,50)
 		) * debrisPart:GetMass()
-		bodyVel.RelativeTo = Enum.ActuatorRelativeTo.World
-		bodyVel.Parent = debrisPart
+		VectorF.RelativeTo = Enum.ActuatorRelativeTo.World
+		VectorF.Parent = debrisPart
 
 		-- cleanup debris after 1 second
 		Debris:AddItem(debrisPart, 1)
